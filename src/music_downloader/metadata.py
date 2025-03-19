@@ -1,13 +1,13 @@
-"""
-SoundCloud metadata extractor
+"""SoundCloud metadata extractor"""
 
-This module provides utilities for extracting metadata from SoundCloud URLs,
-including title, artist, and other track information.
-"""
-
+import argparse
 import re
+
 import requests
 from bs4 import BeautifulSoup
+from mutagen.easyid3 import EasyID3
+from mutagen.mp3 import MP3
+from rich import print as rprint
 
 
 def extract_soundcloud_metadata(url):
@@ -104,11 +104,46 @@ def extract_soundcloud_metadata(url):
         title = re.sub(r"\bfeat\.?\b", "ft", title, flags=re.IGNORECASE)
         title = re.sub(r"\bfeaturing\b", "ft", title, flags=re.IGNORECASE)
 
+        # max one space
+        title = re.sub(r' {2,}', ' ', title)
+
         return {"title": title, "artist": artist}
 
     except Exception as e:
         print(f"An error occurred: {e}")
         return {"title": "Error extracting title", "artist": "Error extracting artist"}
+
+
+def update_metadata(file_path, track_info):
+    """Update the MP3 file with basic metadata (no artwork)"""
+    try:
+        # Create ID3 tags if they don't exist
+        try:
+            audio = EasyID3(file_path)
+        except:
+            # If the file doesn't have an ID3 tag, add one
+            audio = MP3(file_path)
+            audio.add_tags()
+            audio.save()
+            audio = EasyID3(file_path)
+
+        # Set the basic metadata
+        if track_info.get("title"):
+            audio["title"] = track_info["title"]
+        if track_info.get("artist"):
+            audio["artist"] = track_info["artist"]
+            audio["albumartist"] = track_info["artist"]
+        if (
+            track_info.get("genre") and track_info["genre"]
+        ):  # Check if genre is not empty
+            audio["genre"] = track_info["genre"]
+
+        # Save the changes
+        audio.save()
+        return True
+    except Exception as e:
+        print(f"Error updating metadata: {e}")
+        return False
 
 
 if __name__ == "__main__":
