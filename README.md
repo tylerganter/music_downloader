@@ -22,16 +22,10 @@ A Python script that downloads MP3 files from SoundCloud URLs with basic metadat
 
 ## Usage
 
-### Basic Usage
-
 ```bash
-python soundcloud_downloader.py https://soundcloud.com/artist/track
-```
-
-### Download Multiple Tracks
-
-```bash
-python soundcloud_downloader.py https://soundcloud.com/artist/track1 https://soundcloud.com/artist/track2
+python soundcloud_downloader.py -o out/ \
+   https://soundcloud.com/artist/track1 \
+   https://soundcloud.com/artist/track2
 ```
 
 ## How It Works
