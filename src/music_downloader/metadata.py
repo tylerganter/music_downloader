@@ -1,11 +1,16 @@
+"""
+SoundCloud metadata extractor
+
+This module provides utilities for extracting metadata from SoundCloud URLs,
+including title, artist, and other track information.
+"""
+
+import re
 import requests
 from bs4 import BeautifulSoup
-import re
-import argparse
-from rich import print as rprint
 
 
-def extract_soundcloud_info(url):
+def extract_soundcloud_metadata(url):
     """
     Extract title and artist information from a SoundCloud URL.
     Automatically formats the title by replacing "with" with "w/" and "feat" with "ft".
@@ -106,19 +111,15 @@ def extract_soundcloud_info(url):
         return {"title": "Error extracting title", "artist": "Error extracting artist"}
 
 
-def main():
-    # Set up argument parser
+if __name__ == "__main__":
+    import argparse
+    from rich import print as rprint
+
     parser = argparse.ArgumentParser(
         description="Extract title and artist from a SoundCloud URL"
     )
     parser.add_argument("url", help="SoundCloud URL to extract info from")
     args = parser.parse_args()
 
-    # Extract information
-    title_artist = extract_soundcloud_info(args.url)
-
+    title_artist = extract_soundcloud_metadata(args.url)
     rprint(title_artist)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=64.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "music-downloader"
+version = "0.1.0"
+description = "A toolkit for extracting metadata and downloading music from various sources"
+readme = "README.md"
+authors = [
+    {name = "Tyler Ganter"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "yt-dlp>=2023.3.4",
+    "tqdm>=4.64.1",
+    "requests>=2.28.2",
+    "beautifulsoup4>=4.11.1",
+    "mutagen>=1.46.0",
+    "rich",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/tylerganter/music_downloader"
+"Bug Tracker" = "https://github.com/tylerganter/music_downloader/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "flake8",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["music_downloader"]
+
+[tool.setuptools.package-data]
+music_downloader = ["*.py"]
