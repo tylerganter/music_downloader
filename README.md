@@ -1,24 +1,12 @@
 # SoundCloud MP3 Downloader
 
-A Python script that downloads MP3 files from SoundCloud URLs with basic metadata (title, artist, genre).
+A Python script that downloads MP3 files from SoundCloud URLs with basic metadata (title, artist).
 
 ## Features
 
 - Downloads high-quality MP3 files from SoundCloud
-- Extracts and sets basic ID3 metadata (title, artist, genre)
-- Shows download progress with tqdm progress bars
-- Supports batch downloading of multiple tracks
-
-## Requirements
-
-- Python 3.6+
-- FFmpeg (for audio conversion)
-- Required Python packages (install using `pip install -r requirements.txt`):
-  - yt-dlp
-  - tqdm
-  - requests
-  - beautifulsoup4
-  - mutagen
+- Extracts and sets basic ID3 metadata (title, artist)
+- Supports parallel batch downloading of multiple tracks
 
 ## Installation
 
@@ -29,7 +17,7 @@ A Python script that downloads MP3 files from SoundCloud URLs with basic metadat
    - On Windows: Download from [ffmpeg.org](https://ffmpeg.org/download.html) and add to PATH
 3. Install the required Python packages:
    ```
-   pip install -r requirements.txt
+   pip install .
    ```
 
 ## Usage
@@ -45,31 +33,6 @@ python soundcloud_downloader.py https://soundcloud.com/artist/track
 ```bash
 python soundcloud_downloader.py https://soundcloud.com/artist/track1 https://soundcloud.com/artist/track2
 ```
-
-### Specify Output Directory
-
-```bash
-python soundcloud_downloader.py -o ~/Music/downloads https://soundcloud.com/artist/track
-```
-
-### Change Audio Quality
-
-```bash
-python soundcloud_downloader.py -q 192k https://soundcloud.com/artist/track
-```
-
-### Disable Metadata
-
-```bash
-python soundcloud_downloader.py --no-metadata https://soundcloud.com/artist/track
-```
-
-## Available Options
-
-- `-o, --output-dir`: Specify the output directory (default: current directory)
-- `-f, --format`: Audio format (default: mp3)
-- `-q, --quality`: Audio quality (default: 320k)
-- `--no-metadata`: Disable metadata extraction and tagging
 
 ## How It Works
 
