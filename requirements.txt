@@ -1,4 +1,6 @@
 black
-ffmpeg
-tqdm
-yt-dlp
+yt-dlp>=2023.3.4
+tqdm>=4.64.1
+requests>=2.28.2
+beautifulsoup4>=4.11.1
+mutagen>=1.46.0
