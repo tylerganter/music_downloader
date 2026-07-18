@@ -9,12 +9,12 @@ OUTDIR="./out/my_likes"
 TIMESTAMP=$(date "+%Y%m%d_%H%M%S")
 OUTFILE_JSON="$OUTDIR/likes_$TIMESTAMP.json"
 OUTFILE_TRACKS="$OUTDIR/tracks_$TIMESTAMP.txt"
-OUTFILE_TRACKS_W_LEN="$OUTDIR/tracks_w_len_$TIMESTAMP.txt"
+OUTFILE_SHORT_TRACKS_W_LEN="$OUTDIR/short_tracks_w_len_$TIMESTAMP.txt"
 OUTFILE_MIXES="$OUTDIR/mixes_$TIMESTAMP.txt"
 
 # Default date range: last week to today (up to the current second)
 # We leave END_DATE commented out by default so that today's new likes are not filtered out.
-START_DATE=$(date -v-7d "+%Y-%m-%d")
+START_DATE=$(date -v-30d "+%Y-%m-%d")
 # END_DATE=$(date "+%Y-%m-%d")
 
 # Maximum number of likes to fetch
@@ -56,7 +56,7 @@ python3 get_likes.py \
     "${ARGS[@]}" \
     "$PROFILE"
 
-# 2. Parse the JSON and split URLs into tracks (<=18 min), tracks with length, and mixes (>18 min)
+# 2. Parse the JSON and split URLs into tracks (<=18 min), short tracks with length (<4:30), and mixes (>18 min)
 python3 -c "
 import json, sys
 try:
@@ -80,7 +80,7 @@ def format_duration(ms):
         return f'{minutes}:{seconds:02d}'
 
 tracks = []
-tracks_w_len = []
+short_tracks_w_len = []
 mixes = []
 
 for item in data:
@@ -97,20 +97,22 @@ for item in data:
         mixes.append(url)
     else:
         tracks.append(url)
-        duration_str = format_duration(duration) if duration else 'unknown'
-        tracks_w_len.append(f'{url} - {duration_str}')
+        # Under 4:30 = (4 * 60 + 30) * 1000 = 270000 milliseconds
+        if duration and duration < 270000:
+            duration_str = format_duration(duration)
+            short_tracks_w_len.append(f'{url} - {duration_str}')
 
 with open(sys.argv[2], 'w', encoding='utf-8') as f:
     f.write('\n'.join(tracks) + ('\n' if tracks else ''))
 
 with open(sys.argv[3], 'w', encoding='utf-8') as f:
-    f.write('\n'.join(tracks_w_len) + ('\n' if tracks_w_len else ''))
+    f.write('\n'.join(short_tracks_w_len) + ('\n' if short_tracks_w_len else ''))
 
 with open(sys.argv[4], 'w', encoding='utf-8') as f:
     f.write('\n'.join(mixes) + ('\n' if mixes else ''))
 
 print(f'Split complete:')
-print(f'  - {len(tracks)} tracks written to {sys.argv[2]}')
-print(f'  - {len(tracks_w_len)} tracks with length written to {sys.argv[3]}')
-print(f'  - {len(mixes)} mixes written to {sys.argv[4]}')
-" "$OUTFILE_JSON" "$OUTFILE_TRACKS" "$OUTFILE_TRACKS_W_LEN" "$OUTFILE_MIXES"
+print(f'  - {len(tracks)} tracks (<=18m) written to {sys.argv[2]}')
+print(f'  - {len(short_tracks_w_len)} short tracks (<4:30) with length written to {sys.argv[3]}')
+print(f'  - {len(mixes)} mixes (>18m) written to {sys.argv[4]}')
+" "$OUTFILE_JSON" "$OUTFILE_TRACKS" "$OUTFILE_SHORT_TRACKS_W_LEN" "$OUTFILE_MIXES"
